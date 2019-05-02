@@ -20,8 +20,8 @@ dependencies {
 
 ****
 
-##Examples
-#####UDP Server:
+## Examples
+##### UDP Server:
 ```Java
 Server server = Server.create(new UDPServerBackend());
 server.addHandler(new ServerHandler() {
@@ -35,7 +35,7 @@ server.addHandler(new ServerHandler() {
 server.bind(2812);
 ```
 
-#####UDP Client:
+##### UDP Client:
 ```Java
 Client client = Client.create(new UDPClientBackend());
 client.addHandler(new ClientHandler() {
