@@ -25,9 +25,10 @@ dependencies {
 ```Java
 Server server = Server.create(new UDPServerBackend());
 server.addHandler(new ServerHandler() {
+    
     @Override
     public void onPacketReceive(Connection connection, Packet packet) {
-        System.out.println("Received a packet !");
+        System.out.println("Received a packet ! " + packet.getString());
         connection.sendPacket(Packet.create().putInt(0));
         server.close();
     }
@@ -39,9 +40,15 @@ server.bind(2812);
 ```Java
 Client client = Client.create(new UDPClientBackend());
 client.addHandler(new ClientHandler() {
+    
+    @Override
+    public void onConnect() {
+        client.sendPacket(Packet.create().putString("Hey"));
+    }
+    
     @Override
     public void onPacketReceive(Packet packet) {
-        System.out.println("Received a packet !");
+        System.out.println("Received a packet ! " + packet.getInt());
         client.disconnect();
     }
 });
