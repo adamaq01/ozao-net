@@ -3,7 +3,6 @@ package fr.adamaq01.ozao.net.server.backend.udp;
 import fr.adamaq01.ozao.net.packet.Packet;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.ReferenceCountUtil;
 

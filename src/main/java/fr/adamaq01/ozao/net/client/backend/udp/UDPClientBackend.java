@@ -28,20 +28,28 @@ public class UDPClientBackend extends ClientBackend {
     @Override
     protected void connect(InetSocketAddress address) {
         EventLoopGroup group = new NioEventLoopGroup();
+        Bootstrap bootstrap = new Bootstrap();
+        bootstrap.group(group)
+                .channel(NioDatagramChannel.class)
+                .handler(new UDPChannelInitializer(this))
+                .option(ChannelOption.AUTO_READ, true);
         try {
-            Bootstrap bootstrap = new Bootstrap();
-            bootstrap.group(group)
-                    .channel(NioDatagramChannel.class)
-                    .handler(new UDPChannelInitializer(this))
-                    .option(ChannelOption.AUTO_READ, true);
             channelFuture = bootstrap.connect(address).sync();
-            // Client started
-            channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } finally {
-            group.shutdownGracefully();
         }
+
+        // Client started
+
+        new Thread(() -> {
+            try {
+                channelFuture.channel().closeFuture().sync();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                group.shutdownGracefully();
+            }
+        }).start();
     }
 
     @Override

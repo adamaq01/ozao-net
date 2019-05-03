@@ -1,13 +1,12 @@
 package fr.adamaq01.ozao.net.client.backend.udp;
 
 import fr.adamaq01.ozao.net.packet.Packet;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.ReferenceCountUtil;
 
-class UDPChannelHandler extends SimpleChannelInboundHandler<ByteBuf> {
+class UDPChannelHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 
     private UDPClientBackend clientBackend;
 
@@ -28,8 +27,8 @@ class UDPChannelHandler extends SimpleChannelInboundHandler<ByteBuf> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
-        Packet packet = Packet.create(ReferenceCountUtil.retain(msg));
+    protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) throws Exception {
+        Packet packet = Packet.create(ReferenceCountUtil.retain(msg.content()));
         this.clientBackend.handlers.forEach(handler -> handler.onPacketReceive(packet));
     }
 

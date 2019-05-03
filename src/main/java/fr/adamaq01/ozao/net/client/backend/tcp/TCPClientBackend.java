@@ -35,13 +35,21 @@ public class TCPClientBackend extends ClientBackend {
                     .handler(new TCPChannelInitializer(this))
                     .option(ChannelOption.AUTO_READ, true);
             channelFuture = bootstrap.connect(address).sync();
-            // Client started
-            channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } finally {
-            group.shutdownGracefully();
         }
+
+        // Client started
+
+        new Thread(() -> {
+            try {
+                channelFuture.channel().closeFuture().sync();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                group.shutdownGracefully();
+            }
+        }).start();
     }
 
     @Override

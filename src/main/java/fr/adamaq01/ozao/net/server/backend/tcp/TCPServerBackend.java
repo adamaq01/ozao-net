@@ -36,14 +36,22 @@ public class TCPServerBackend extends ServerBackend {
                     .childHandler(new TCPChannelInitializer(this))
                     .childOption(ChannelOption.AUTO_READ, true);
             channelFuture = serverBootstrap.bind(port).sync();
-            // Server started
-            channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } finally {
-            bossGroup.shutdownGracefully();
-            workerGroup.shutdownGracefully();
         }
+
+        // Server started
+
+        new Thread(() -> {
+            try {
+                channelFuture.channel().closeFuture().sync();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                bossGroup.shutdownGracefully();
+                workerGroup.shutdownGracefully();
+            }
+        }).start();
     }
 
     @Override

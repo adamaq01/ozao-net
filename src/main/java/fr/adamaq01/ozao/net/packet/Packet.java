@@ -32,7 +32,6 @@ public final class Packet {
         return this;
     }
 
-
     public Packet putBytes(byte... src) {
         this.data.writeBytes(src);
 

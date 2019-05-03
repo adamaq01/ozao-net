@@ -26,21 +26,29 @@ public class UDPServerBackend extends ServerBackend {
     protected void bind(int port) {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
+        ServerBootstrap serverBootstrap = new ServerBootstrap();
+        serverBootstrap.group(bossGroup, workerGroup)
+                .channel(UDPServerChannel.class)
+                .childHandler(new UDPChannelInitializer(this))
+                .childOption(ChannelOption.AUTO_READ, true);
         try {
-            ServerBootstrap serverBootstrap = new ServerBootstrap();
-            serverBootstrap.group(bossGroup, workerGroup)
-                    .channel(UDPServerChannel.class)
-                    .childHandler(new UDPChannelInitializer(this))
-                    .childOption(ChannelOption.AUTO_READ, true);
             channelFuture = serverBootstrap.bind(port).sync();
-            // Server started
-            channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } finally {
-            bossGroup.shutdownGracefully();
-            workerGroup.shutdownGracefully();
         }
+
+        // Server started
+
+        new Thread(() -> {
+            try {
+                channelFuture.channel().closeFuture().sync();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                bossGroup.shutdownGracefully();
+                workerGroup.shutdownGracefully();
+            }
+        }).start();
     }
 
     @Override
