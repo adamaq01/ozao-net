@@ -1,29 +1,27 @@
 package fr.adamaq01.ozao.net.server.backend.udp;
 
+import fr.adamaq01.ozao.net.protocol.Protocol;
 import fr.adamaq01.ozao.net.server.Connection;
-import fr.adamaq01.ozao.net.server.ServerBackend;
-import fr.adamaq01.ozao.net.server.ServerHandler;
+import fr.adamaq01.ozao.net.server.Server;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 
+import java.net.InetSocketAddress;
 import java.util.*;
 
-public class UDPServerBackend extends ServerBackend {
+public class UDPServer extends Server {
 
     protected ChannelFuture channelFuture;
-    protected List<UDPConnection> connections;
-    protected List<ServerHandler> handlers;
 
-    public UDPServerBackend() {
-        this.connections = new ArrayList<>();
-        this.handlers = new ArrayList<>();
+    public UDPServer(Protocol protocol) {
+        super(protocol);
     }
 
     @Override
-    protected void bind(int port) {
+    public Server bind(int port) {
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         ServerBootstrap serverBootstrap = new ServerBootstrap();
@@ -49,24 +47,36 @@ public class UDPServerBackend extends ServerBackend {
                 workerGroup.shutdownGracefully();
             }
         }).start();
+
+        return this;
     }
 
     @Override
-    protected void close() {
+    public boolean isBound() {
+        return channelFuture.channel().isOpen();
+    }
+
+    @Override
+    public Server close() {
         try {
             channelFuture.channel().disconnect().sync().channel().close().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        return this;
     }
 
     @Override
-    protected List<Connection> getConnections() {
-        return Collections.unmodifiableList(connections);
+    public int getPort() {
+        if (channelFuture == null || !isBound()) {
+            return -1;
+        } else {
+            return ((InetSocketAddress) channelFuture.channel().localAddress()).getPort();
+        }
     }
 
-    @Override
-    protected List<ServerHandler> getHandlers() {
-        return handlers;
+    protected List<Connection> getModifiableConnections() {
+        return connections;
     }
 }

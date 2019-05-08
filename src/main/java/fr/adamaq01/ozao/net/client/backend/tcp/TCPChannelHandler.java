@@ -1,5 +1,6 @@
 package fr.adamaq01.ozao.net.client.backend.tcp;
 
+import fr.adamaq01.ozao.net.Buffer;
 import fr.adamaq01.ozao.net.packet.Packet;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -8,33 +9,33 @@ import io.netty.util.ReferenceCountUtil;
 
 class TCPChannelHandler extends SimpleChannelInboundHandler<ByteBuf> {
 
-    private TCPClientBackend clientBackend;
+    private TCPClient client;
 
-    protected TCPChannelHandler(TCPClientBackend clientBackend) {
-        this.clientBackend = clientBackend;
+    protected TCPChannelHandler(TCPClient client) {
+        this.client = client;
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         super.channelActive(ctx);
-        this.clientBackend.handlers.forEach(handler -> handler.onConnect());
+        this.client.getHandlers().forEach(handler -> handler.onConnect(client));
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
-        this.clientBackend.handlers.forEach(handler -> handler.onDisconnect());
+        this.client.getHandlers().forEach(handler -> handler.onDisconnect(client));
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
-        Packet packet = Packet.create(ReferenceCountUtil.retain(msg));
-        this.clientBackend.handlers.forEach(handler -> handler.onPacketReceive(packet));
+    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {
+        Buffer buffer = Buffer.create(ReferenceCountUtil.retain(msg));
+        Packet packet = this.client.getProtocol().decode(buffer);
+        this.client.getHandlers().forEach(handler -> handler.onPacketReceive(client, packet));
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        super.exceptionCaught(ctx, cause);
-        cause.printStackTrace();
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        this.client.getHandlers().forEach(handler -> handler.onException(client, cause));
     }
 }

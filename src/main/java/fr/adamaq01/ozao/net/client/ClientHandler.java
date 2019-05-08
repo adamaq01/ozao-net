@@ -2,14 +2,13 @@ package fr.adamaq01.ozao.net.client;
 
 import fr.adamaq01.ozao.net.packet.Packet;
 
-public class ClientHandler {
+public interface ClientHandler {
 
-    public void onConnect() {
-    }
+    void onConnect(Client client);
 
-    public void onDisconnect() {
-    }
+    void onDisconnect(Client client);
 
-    public void onPacketReceive(Packet packet) {
-    }
+    void onPacketReceive(Client client, Packet packet);
+
+    void onException(Client client, Throwable cause);
 }

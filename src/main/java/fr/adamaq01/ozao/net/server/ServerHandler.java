@@ -2,14 +2,13 @@ package fr.adamaq01.ozao.net.server;
 
 import fr.adamaq01.ozao.net.packet.Packet;
 
-public class ServerHandler {
+public interface ServerHandler {
 
-    public void onConnect(Connection connection) {
-    }
+    void onConnect(Server server, Connection connection);
 
-    public void onDisconnect(Connection connection) {
-    }
+    void onDisconnect(Server server, Connection connection);
 
-    public void onPacketReceive(Connection connection, Packet packet) {
-    }
+    void onPacketReceive(Server server, Connection connection, Packet packet);
+
+    void onException(Server server, Connection connection, Throwable cause);
 }

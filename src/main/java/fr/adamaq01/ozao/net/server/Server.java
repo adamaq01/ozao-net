@@ -1,46 +1,61 @@
 package fr.adamaq01.ozao.net.server;
 
 import fr.adamaq01.ozao.net.packet.Packet;
+import fr.adamaq01.ozao.net.protocol.Protocol;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class Server {
+public abstract class Server {
 
-    public static Server create(ServerBackend backend) {
-        return new Server(backend);
+    protected Protocol protocol;
+    protected int timeout;
+    protected List<Connection> connections;
+    protected List<ServerHandler> handlers;
+
+    protected Server(Protocol protocol) {
+        this.protocol = protocol;
+        this.timeout = 30;
+        this.connections = new ArrayList<>();
+        this.handlers = new ArrayList<>();
     }
 
-    private ServerBackend backend;
+    public abstract Server bind(int port);
 
-    private Server(ServerBackend backend) {
-        this.backend = backend;
+    public abstract boolean isBound();
+
+    public abstract Server close();
+
+    public abstract int getPort();
+
+    public Protocol getProtocol() {
+        return protocol;
     }
 
-    public void bind(int port) {
-        this.backend.bind(port);
+    public Server setTimeout(int timeout) {
+        this.timeout = timeout;
+
+        return this;
     }
 
-    public void close() {
-        this.backend.close();
-    }
-
-    public int getNumConnected() {
-        return this.backend.getConnections().size();
+    public int getTimeout() {
+        return timeout;
     }
 
     public List<Connection> getConnections() {
-        return this.backend.getConnections();
-    }
-
-    public List<ServerHandler> getHandlers() {
-        return this.backend.getHandlers();
+        return Collections.unmodifiableList(connections);
     }
 
     public Server addHandler(ServerHandler handler) {
-        this.backend.getHandlers().add(handler);
+        this.handlers.add(handler);
 
         return this;
+    }
+
+    public List<ServerHandler> getHandlers() {
+        return handlers;
     }
 
     public Server broadcastPacket(Packet packet) {

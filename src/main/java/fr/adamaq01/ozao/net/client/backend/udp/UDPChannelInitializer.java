@@ -2,18 +2,20 @@ package fr.adamaq01.ozao.net.client.backend.udp;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.DatagramChannel;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 
 class UDPChannelInitializer extends ChannelInitializer<DatagramChannel> {
 
-    private UDPClientBackend backend;
+    private UDPClient client;
 
-    protected UDPChannelInitializer(UDPClientBackend backend) {
-        this.backend = backend;
+    protected UDPChannelInitializer(UDPClient client) {
+        this.client = client;
     }
 
     @Override
-    protected void initChannel(DatagramChannel ch) throws Exception {
-        backend.channel = ch;
-        ch.pipeline().addLast(new UDPChannelHandler(backend));
+    protected void initChannel(DatagramChannel ch) {
+        client.channel = ch;
+        ch.pipeline().addLast("readTimeoutHandler", new ReadTimeoutHandler(client.getTimeout()));
+        ch.pipeline().addLast(new UDPChannelHandler(client));
     }
 }

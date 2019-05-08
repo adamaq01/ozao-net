@@ -1,8 +1,8 @@
 package fr.adamaq01.ozao.net.client.backend.udp;
 
-import fr.adamaq01.ozao.net.client.ClientBackend;
-import fr.adamaq01.ozao.net.client.ClientHandler;
+import fr.adamaq01.ozao.net.client.Client;
 import fr.adamaq01.ozao.net.packet.Packet;
+import fr.adamaq01.ozao.net.protocol.Protocol;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -12,21 +12,18 @@ import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
 
-public class UDPClientBackend extends ClientBackend {
+public class UDPClient extends Client {
 
     protected ChannelFuture channelFuture;
     protected DatagramChannel channel;
-    protected List<ClientHandler> handlers;
 
-    public UDPClientBackend() {
-        this.handlers = new ArrayList<>();
+    public UDPClient(Protocol protocol) {
+        super(protocol);
     }
 
     @Override
-    protected void connect(InetSocketAddress address) {
+    public Client connect(InetSocketAddress address) {
         EventLoopGroup group = new NioEventLoopGroup();
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(group)
@@ -50,24 +47,25 @@ public class UDPClientBackend extends ClientBackend {
                 group.shutdownGracefully();
             }
         }).start();
+
+        return this;
     }
 
     @Override
-    protected void disconnect() {
+    public Client disconnect() {
         try {
             channelFuture.channel().disconnect().sync().channel().close().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        return this;
     }
 
     @Override
-    protected List<ClientHandler> getHandlers() {
-        return handlers;
-    }
+    public Client sendPacket(Packet packet) {
+        channel.writeAndFlush(protocol.encode(packet).getData());
 
-    @Override
-    protected void sendPacket(Packet packet) {
-        channel.writeAndFlush(packet.getData());
+        return this;
     }
 }

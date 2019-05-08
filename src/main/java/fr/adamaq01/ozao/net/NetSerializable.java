@@ -1,10 +1,8 @@
 package fr.adamaq01.ozao.net;
 
-import fr.adamaq01.ozao.net.packet.Packet;
-
 public interface NetSerializable<T> {
 
-    public Packet write(Packet packet);
+    Buffer write(Buffer packet);
 
-    public T read(Packet packet);
+    T read(Buffer packet);
 }
