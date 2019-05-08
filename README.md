@@ -15,7 +15,7 @@ repositories {
 
 ```Gradle
 dependencies {
-    compile 'com.github.Adamaq01:ozao-net:2.0.0'
+    compile 'com.github.Adamaq01:ozao-net:2.0.1'
 }
 ```
 
