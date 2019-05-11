@@ -1,5 +1,6 @@
 package fr.adamaq01.ozao.net.client;
 
+import fr.adamaq01.ozao.net.OzaoException;
 import fr.adamaq01.ozao.net.packet.Packet;
 import fr.adamaq01.ozao.net.protocol.Protocol;
 
@@ -51,5 +52,14 @@ public abstract class Client {
         return handlers;
     }
 
-    public abstract Client sendPacket(Packet packet);
+    public Client sendPacket(Packet packet) {
+        if (!this.protocol.verify(packet))
+            this.handlers.forEach(handler -> handler.onException(this, new OzaoException("Tried to send a packet that does not suit the protocol requirements !")));
+        else
+            sendPacket0(packet);
+
+        return this;
+    }
+
+    protected abstract void sendPacket0(Packet packet);
 }

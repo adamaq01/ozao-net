@@ -63,9 +63,7 @@ public class UDPClient extends Client {
     }
 
     @Override
-    public Client sendPacket(Packet packet) {
+    protected void sendPacket0(Packet packet) {
         channel.writeAndFlush(protocol.encode(packet).getData());
-
-        return this;
     }
 }

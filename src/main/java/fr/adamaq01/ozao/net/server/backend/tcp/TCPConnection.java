@@ -1,8 +1,8 @@
 package fr.adamaq01.ozao.net.server.backend.tcp;
 
 import fr.adamaq01.ozao.net.packet.Packet;
-import fr.adamaq01.ozao.net.protocol.Protocol;
 import fr.adamaq01.ozao.net.server.Connection;
+import fr.adamaq01.ozao.net.server.Server;
 import io.netty.channel.socket.SocketChannel;
 
 import java.net.InetSocketAddress;
@@ -11,16 +11,14 @@ class TCPConnection extends Connection {
 
     private SocketChannel channel;
 
-    protected TCPConnection(Protocol protocol, SocketChannel channel) {
-        super(protocol);
+    protected TCPConnection(Server server, SocketChannel channel) {
+        super(server);
         this.channel = channel;
     }
 
     @Override
-    public Connection sendPacket(Packet packet) {
-        channel.writeAndFlush(protocol.encode(packet).getData());
-
-        return this;
+    public void sendPacket0(Packet packet) {
+        channel.writeAndFlush(server.getProtocol().encode(packet).getData());
     }
 
     @Override

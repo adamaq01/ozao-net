@@ -1,6 +1,7 @@
 package fr.adamaq01.ozao.net.client.backend.udp;
 
 import fr.adamaq01.ozao.net.Buffer;
+import fr.adamaq01.ozao.net.OzaoException;
 import fr.adamaq01.ozao.net.packet.Packet;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -28,8 +29,10 @@ class UDPChannelHandler extends SimpleChannelInboundHandler<DatagramPacket> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) {
+    protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) throws Exception {
         Buffer buffer = Buffer.create(ReferenceCountUtil.retain(msg.content()));
+        if (!this.client.getProtocol().verify(buffer))
+            throw new OzaoException("Received a packet that does not suit the protocol requirements !");
         Packet packet = this.client.getProtocol().decode(buffer);
         this.client.getHandlers().forEach(handler -> handler.onPacketReceive(client, packet));
     }

@@ -1,6 +1,7 @@
 package fr.adamaq01.ozao.net.server.backend.tcp;
 
 import fr.adamaq01.ozao.net.Buffer;
+import fr.adamaq01.ozao.net.OzaoException;
 import fr.adamaq01.ozao.net.packet.Packet;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -31,8 +32,10 @@ class TCPChannelHandler extends SimpleChannelInboundHandler<ByteBuf> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) {
+    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
         Buffer buffer = Buffer.create(ReferenceCountUtil.retain(msg));
+        if (!this.server.getProtocol().verify(buffer))
+            throw new OzaoException("Received a packet that does not suit the protocol requirements !");
         Packet packet = this.server.getProtocol().decode(buffer);
         this.server.getHandlers().forEach(handler -> handler.onPacketReceive(server, connection, packet));
     }

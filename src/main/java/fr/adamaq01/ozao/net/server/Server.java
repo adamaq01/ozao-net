@@ -1,5 +1,6 @@
 package fr.adamaq01.ozao.net.server;
 
+import fr.adamaq01.ozao.net.OzaoException;
 import fr.adamaq01.ozao.net.packet.Packet;
 import fr.adamaq01.ozao.net.protocol.Protocol;
 
@@ -59,13 +60,19 @@ public abstract class Server {
     }
 
     public Server broadcastPacket(Packet packet) {
-        getConnections().forEach(connection -> connection.sendPacket(packet));
+        if (!this.protocol.verify(packet))
+            this.handlers.forEach(handler -> handler.onException(this, null, new OzaoException("Tried to broadcast a packet that does not suit the protocol requirements !")));
+        else
+            getConnections().forEach(connection -> connection.sendPacket0(packet));
 
         return this;
     }
 
     public Server broadcastPacketExcept(Packet packet, Connection... connections) {
-        getConnections().stream().filter(connection -> !Arrays.stream(connections).anyMatch(connection1 -> connection1.equals(connection))).forEach(connection -> connection.sendPacket(packet));
+        if (!this.protocol.verify(packet))
+            this.handlers.forEach(handler -> handler.onException(this, null, new OzaoException("Tried to broadcast a packet that does not suit the protocol requirements !")));
+        else
+            getConnections().stream().filter(connection -> !Arrays.stream(connections).anyMatch(connection1 -> connection1.equals(connection))).forEach(connection -> connection.sendPacket0(packet));
 
         return this;
     }

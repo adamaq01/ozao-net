@@ -4,6 +4,7 @@ import com.github.luben.zstd.Zstd;
 import fr.adamaq01.ozao.net.packet.Packet;
 import fr.adamaq01.ozao.net.protocol.Protocol;
 
+import java.util.Map;
 import java.util.function.Function;
 
 public class OzaoProtocol extends Protocol {
@@ -27,16 +28,29 @@ public class OzaoProtocol extends Protocol {
     }
 
     public OzaoProtocol(Function<Buffer, Buffer> compressFunction, Function<Buffer, Buffer> decompressFunction) {
-        super("ozao");
+        super("ozao", Map.of("compression", false));
         this.compressFunction = compressFunction;
         this.decompressFunction = decompressFunction;
     }
 
     @Override
-    public Packet decode(Buffer rawBuffer) {
-        boolean compression = rawBuffer.getBoolean();
-        Buffer packetPayload = compression ? decompressFunction.apply(rawBuffer.sliceCopy(1)) : rawBuffer.sliceCopy(1);
-        return Packet.create().put("compression", compression).put("payload", packetPayload);
+    public boolean verify(Buffer buffer) {
+        byte compression = buffer.getByte();
+        buffer.readerIndex(0);
+        return compression == 0 || compression == 1;
+    }
+
+    @Override
+    public boolean verify(Packet packet) {
+        fillDefaultValues(packet);
+        return true;
+    }
+
+    @Override
+    public Packet decode(Buffer buffer) {
+        boolean compression = buffer.getBoolean();
+        Buffer packetPayload = compression ? decompressFunction.apply(buffer.sliceCopy(1)) : buffer.sliceCopy(1);
+        return Packet.create(packetPayload).put("compression", compression);
     }
 
     @Override
@@ -44,7 +58,7 @@ public class OzaoProtocol extends Protocol {
         Buffer buffer = Buffer.create();
         boolean compression = packet.get("compression");
         buffer.putBoolean(compression);
-        buffer.putBuffer(compression ? compressFunction.apply(packet.get("payload")) : packet.get("payload"));
+        buffer.putBuffer(compression ? compressFunction.apply(packet.getPayload()) : packet.getPayload());
         return buffer;
     }
 }

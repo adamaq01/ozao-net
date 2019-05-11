@@ -13,7 +13,7 @@ class UDPChannelInitializer extends ChannelInitializer<UDPChannel> {
 
     @Override
     protected void initChannel(UDPChannel ch) {
-        UDPConnection connection = new UDPConnection(server.getProtocol(), ch);
+        UDPConnection connection = new UDPConnection(server, ch);
         ch.pipeline().addLast("readTimeoutHandler", new ReadTimeoutHandler(server.getTimeout()));
         ch.pipeline().addLast(new UDPChannelHandler(server, connection));
         server.getModifiableConnections().add(connection);

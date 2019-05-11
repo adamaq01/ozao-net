@@ -14,7 +14,7 @@ class TCPChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     @Override
     protected void initChannel(SocketChannel ch) {
-        TCPConnection connection = new TCPConnection(server.getProtocol(), ch);
+        TCPConnection connection = new TCPConnection(server, ch);
         ch.pipeline().addLast("readTimeoutHandler", new ReadTimeoutHandler(server.getTimeout()));
         ch.pipeline().addLast(new TCPChannelHandler(server, connection));
         server.getModifiableConnections().add(connection);

@@ -10,12 +10,22 @@ public class BaseProtocol extends Protocol {
     }
 
     @Override
-    public Packet decode(Buffer rawBuffer) {
-        return Packet.create().put("payload", rawBuffer);
+    public boolean verify(Buffer buffer) {
+        return true;
+    }
+
+    @Override
+    public boolean verify(Packet packet) {
+        return true;
+    }
+
+    @Override
+    public Packet decode(Buffer buffer) {
+        return Packet.create(buffer);
     }
 
     @Override
     public Buffer encode(Packet packet) {
-        return packet.get("payload");
+        return packet.getPayload();
     }
 }
