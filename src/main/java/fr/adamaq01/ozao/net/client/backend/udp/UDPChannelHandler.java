@@ -35,6 +35,7 @@ class UDPChannelHandler extends SimpleChannelInboundHandler<DatagramPacket> {
             throw new OzaoException("Received a packet that does not suit the protocol requirements !");
         Packet packet = this.client.getProtocol().decode(buffer);
         this.client.getHandlers().forEach(handler -> handler.onPacketReceive(client, packet));
+        this.client.getPacketHandlers().stream().filter(packetHandler -> packetHandler.verify(packet)).forEach(handler -> handler.onPacketReceive(client, packet));
     }
 
     @Override

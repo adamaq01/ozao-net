@@ -2,6 +2,7 @@ package fr.adamaq01.ozao.net.client.backend.udp;
 
 import fr.adamaq01.ozao.net.client.Client;
 import fr.adamaq01.ozao.net.packet.Packet;
+import fr.adamaq01.ozao.net.packet.PacketContainer;
 import fr.adamaq01.ozao.net.protocol.Protocol;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -65,5 +66,11 @@ public class UDPClient extends Client {
     @Override
     protected void sendPacket0(Packet packet) {
         channel.writeAndFlush(protocol.encode(packet).getData());
+    }
+
+    @Override
+    protected void sendPackets0(PacketContainer packetContainer) {
+        packetContainer.forEach(packet -> channel.write(protocol.encode(packet).getData()));
+        channel.flush();
     }
 }

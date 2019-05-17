@@ -15,12 +15,14 @@ public abstract class Server {
     protected int timeout;
     protected List<Connection> connections;
     protected List<ServerHandler> handlers;
+    protected List<ServerPacketHandler> packetHandlers;
 
     protected Server(Protocol protocol) {
         this.protocol = protocol;
         this.timeout = 30;
         this.connections = new ArrayList<>();
         this.handlers = new ArrayList<>();
+        this.packetHandlers = new ArrayList<>();
     }
 
     public abstract Server bind(int port);
@@ -55,8 +57,18 @@ public abstract class Server {
         return this;
     }
 
+    public Server addPacketHandler(ServerPacketHandler packetHandler) {
+        this.packetHandlers.add(packetHandler);
+
+        return this;
+    }
+
     public List<ServerHandler> getHandlers() {
         return handlers;
+    }
+
+    public List<ServerPacketHandler> getPacketHandlers() {
+        return packetHandlers;
     }
 
     public Server broadcastPacket(Packet packet) {

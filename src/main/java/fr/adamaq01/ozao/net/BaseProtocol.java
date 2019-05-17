@@ -3,6 +3,9 @@ package fr.adamaq01.ozao.net;
 import fr.adamaq01.ozao.net.packet.Packet;
 import fr.adamaq01.ozao.net.protocol.Protocol;
 
+import java.util.Collection;
+import java.util.List;
+
 public class BaseProtocol extends Protocol {
 
     public BaseProtocol() {
@@ -17,6 +20,11 @@ public class BaseProtocol extends Protocol {
     @Override
     public boolean verify(Packet packet) {
         return true;
+    }
+
+    @Override
+    public Collection<Buffer> cut(Buffer buffer) {
+        return List.of(buffer);
     }
 
     @Override

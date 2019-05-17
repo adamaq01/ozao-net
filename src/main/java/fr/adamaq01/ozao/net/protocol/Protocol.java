@@ -3,6 +3,7 @@ package fr.adamaq01.ozao.net.protocol;
 import fr.adamaq01.ozao.net.Buffer;
 import fr.adamaq01.ozao.net.packet.Packet;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +24,8 @@ public abstract class Protocol {
     public abstract boolean verify(Buffer buffer);
 
     public abstract boolean verify(Packet packet);
+
+    public abstract Collection<Buffer> cut(Buffer buffer);
 
     public abstract Packet decode(Buffer buffer);
 
