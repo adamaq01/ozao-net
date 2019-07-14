@@ -6,6 +6,7 @@
 
 #### Add the dependency to your project
 ![Release](https://jitpack.io/v/Adamaq01/ozao-net.svg)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FAdamaq01%2Fozao-net.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FAdamaq01%2Fozao-net?ref=badge_shield)
 
 ```Gradle
 repositories {
@@ -125,3 +126,7 @@ Client client = new UDPClient(new OzaoProtocol()).addHandler(new ClientHandlerAd
 ###### - [Netty](https://netty.io)
 ###### - luben's [zstd-jni](https://github.com/luben/zstd-jni)
 ###### - [Log4J2](https://logging.apache.org/log4j/2.x/)
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FAdamaq01%2Fozao-net.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FAdamaq01%2Fozao-net?ref=badge_large)
