@@ -31,4 +31,9 @@ class UDPConnection extends Connection {
     public InetSocketAddress getAddress() {
         return (InetSocketAddress) channel.remoteAddress();
     }
+
+    @Override
+    public void close() {
+        channel.close();
+    }
 }

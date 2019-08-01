@@ -40,4 +40,6 @@ public abstract class Connection {
     protected abstract void sendPackets0(PacketContainer packetContainer);
 
     public abstract InetSocketAddress getAddress();
+
+    public abstract void close();
 }

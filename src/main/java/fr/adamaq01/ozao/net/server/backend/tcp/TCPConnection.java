@@ -32,5 +32,10 @@ class TCPConnection extends Connection {
     public InetSocketAddress getAddress() {
         return channel.remoteAddress();
     }
+
+    @Override
+    public void close() {
+        channel.close();
+    }
 }
 
