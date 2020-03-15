@@ -34,9 +34,9 @@ class UDPChannelHandler extends SimpleChannelInboundHandler<ByteBuf> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
         Buffer buffer = Buffer.create(ReferenceCountUtil.retain(msg));
-        if (!this.server.getProtocol().verify(buffer))
+        if (!this.server.getProtocol().verify(connection, buffer))
             throw new OzaoException("Received a packet that does not suit the protocol requirements !");
-        Packet packet = this.server.getProtocol().decode(buffer);
+        Packet packet = this.server.getProtocol().decode(connection, buffer);
         this.server.getHandlers().forEach(handler -> handler.onPacketReceive(server, connection, packet));
         this.server.getPacketHandlers().stream().filter(packetHandler -> packetHandler.verify(packet)).forEach(handler -> handler.onPacketReceive(server, connection, packet));
     }

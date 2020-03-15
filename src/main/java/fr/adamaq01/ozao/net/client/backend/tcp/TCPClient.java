@@ -1,9 +1,9 @@
 package fr.adamaq01.ozao.net.client.backend.tcp;
 
 import fr.adamaq01.ozao.net.client.Client;
+import fr.adamaq01.ozao.net.client.packet.ClientPacketContainer;
+import fr.adamaq01.ozao.net.client.protocol.ClientProtocol;
 import fr.adamaq01.ozao.net.packet.Packet;
-import fr.adamaq01.ozao.net.packet.PacketContainer;
-import fr.adamaq01.ozao.net.protocol.Protocol;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -12,19 +12,17 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
-import java.net.InetSocketAddress;
-
 public class TCPClient extends Client {
 
     protected ChannelFuture channelFuture;
     protected SocketChannel channel;
 
-    public TCPClient(Protocol protocol) {
+    public TCPClient(ClientProtocol protocol) {
         super(protocol);
     }
 
     @Override
-    public Client connect(InetSocketAddress address) {
+    public Client connect(String address, int port) {
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap bootstrap = new Bootstrap();
@@ -32,7 +30,7 @@ public class TCPClient extends Client {
                     .channel(NioSocketChannel.class)
                     .handler(new TCPChannelInitializer(this))
                     .option(ChannelOption.AUTO_READ, true);
-            channelFuture = bootstrap.connect(address).sync();
+            channelFuture = bootstrap.connect(address, port).sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -69,7 +67,7 @@ public class TCPClient extends Client {
     }
 
     @Override
-    protected void sendPackets0(PacketContainer packetContainer) {
+    protected void sendPackets0(ClientPacketContainer packetContainer) {
         packetContainer.forEach(packet -> channel.write(protocol.encode(packet).getData()));
         channel.flush();
     }

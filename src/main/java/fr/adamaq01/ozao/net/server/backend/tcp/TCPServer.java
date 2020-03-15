@@ -1,8 +1,8 @@
 package fr.adamaq01.ozao.net.server.backend.tcp;
 
-import fr.adamaq01.ozao.net.protocol.Protocol;
 import fr.adamaq01.ozao.net.server.Connection;
 import fr.adamaq01.ozao.net.server.Server;
+import fr.adamaq01.ozao.net.server.protocol.ServerProtocol;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -17,7 +17,7 @@ public class TCPServer extends Server {
 
     protected ChannelFuture channelFuture;
 
-    public TCPServer(Protocol protocol) {
+    public TCPServer(ServerProtocol protocol) {
         super(protocol);
     }
 

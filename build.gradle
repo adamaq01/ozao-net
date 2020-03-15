@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'fr.adamaq01'
-version '2.3.1'
+version '2.4.0'
 
 sourceCompatibility = JavaVersion.VERSION_1_9
 
@@ -24,7 +24,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'fr.adamaq01'
             artifactId = 'ozao-net'
-            version = '2.3.1'
+            version = '2.4.0'
 
             from components.java
         }

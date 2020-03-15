@@ -15,7 +15,7 @@ repositories {
 
 ```Gradle
 dependencies {
-    compile 'com.github.Adamaq01:ozao-net:2.3.1'
+    compile 'com.github.Adamaq01:ozao-net:2.4.0'
 }
 ```
 
@@ -72,7 +72,7 @@ public class Bird implements NetSerializable<Bird> {
 ##### UDP Server:
 ```Java
 // Instantiate a new UDP server, set timeout delay, add a basic handler then bind the server
-Server server = new UDPServer(new OzaoProtocol()).setTimeout(15).addHandler(new ServerHandlerAdapater() {
+Server server = new UDPServer(new OzaoServerProtocol()).setTimeout(15).addHandler(new ServerHandlerAdapater() {
 
     @Override
     public void onPacketReceive(Server server, Connection connection, Packet packet) {
@@ -92,7 +92,7 @@ Server server = new UDPServer(new OzaoProtocol()).setTimeout(15).addHandler(new 
 ##### UDP Client:
 ```Java
 // Instantiate a new UDP client, add a basic handler then connect to the server
-Client client = new UDPClient(new OzaoProtocol()).addHandler(new ClientHandlerAdapter() {
+Client client = new UDPClient(new OzaoClientProtocol()).addHandler(new ClientHandlerAdapter() {
 
     @Override
     public void onConnect(Client client) {

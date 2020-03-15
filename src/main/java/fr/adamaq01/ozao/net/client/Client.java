@@ -1,33 +1,28 @@
 package fr.adamaq01.ozao.net.client;
 
 import fr.adamaq01.ozao.net.OzaoException;
+import fr.adamaq01.ozao.net.client.packet.ClientPacketContainer;
+import fr.adamaq01.ozao.net.client.protocol.ClientProtocol;
 import fr.adamaq01.ozao.net.packet.Packet;
-import fr.adamaq01.ozao.net.packet.PacketContainer;
-import fr.adamaq01.ozao.net.protocol.Protocol;
 
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Client {
 
-    protected Protocol protocol;
+    protected ClientProtocol protocol;
     protected int timeout;
     protected List<ClientHandler> handlers;
     protected List<ClientPacketHandler> packetHandlers;
 
-    protected Client(Protocol protocol) {
+    protected Client(ClientProtocol protocol) {
         this.protocol = protocol;
         this.timeout = 30;
         this.handlers = new ArrayList<>();
         this.packetHandlers = new ArrayList<>();
     }
 
-    public Client connect(String address, int port) {
-        return this.connect(new InetSocketAddress(address, port));
-    }
-
-    public abstract Client connect(InetSocketAddress address);
+    public abstract Client connect(String address, int port);
 
     public abstract Client disconnect();
 
@@ -41,7 +36,7 @@ public abstract class Client {
         return timeout;
     }
 
-    public Protocol getProtocol() {
+    public ClientProtocol getProtocol() {
         return protocol;
     }
 
@@ -65,7 +60,7 @@ public abstract class Client {
         return packetHandlers;
     }
 
-    public final Client sendPackets(PacketContainer packetContainer) {
+    public final Client sendPackets(ClientPacketContainer packetContainer) {
         if (!packetContainer.verify(this.protocol)) {
             this.handlers.forEach(handler -> handler.onException(this, new OzaoException("Tried to send one or more packets that does not suit the protocol requirements ! These packets will not be sent !")));
             packetContainer.filter(this.protocol);
@@ -86,5 +81,5 @@ public abstract class Client {
 
     protected abstract void sendPacket0(Packet packet);
 
-    protected abstract void sendPackets0(PacketContainer packetContainer);
+    protected abstract void sendPackets0(ClientPacketContainer packetContainer);
 }

@@ -1,14 +1,14 @@
 package fr.adamaq01.ozao.net;
 
+import fr.adamaq01.ozao.net.client.protocol.ClientProtocol;
 import fr.adamaq01.ozao.net.packet.Packet;
-import fr.adamaq01.ozao.net.protocol.Protocol;
 
 import java.util.Collection;
 import java.util.List;
 
-public class BaseProtocol extends Protocol {
+public class BaseClientProtocol extends ClientProtocol {
 
-    public BaseProtocol() {
+    public BaseClientProtocol() {
         super("base");
     }
 

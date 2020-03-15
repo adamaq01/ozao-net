@@ -1,4 +1,4 @@
-package fr.adamaq01.ozao.net.protocol;
+package fr.adamaq01.ozao.net.client.protocol;
 
 import fr.adamaq01.ozao.net.Buffer;
 import fr.adamaq01.ozao.net.packet.Packet;
@@ -7,12 +7,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Protocol {
+/**
+ * @author Adamaq01 (Adam THIBERT)
+ */
+public abstract class ClientProtocol {
 
     protected String identifier;
     protected Map<String, Object> defaultValues;
 
-    protected Protocol(String identifier, Map<String, Object>... defaultValues) {
+    protected ClientProtocol(String identifier, Map<String, Object>... defaultValues) {
         this.identifier = identifier;
         this.defaultValues = defaultValues != null && defaultValues.length > 0 ? defaultValues[0] : new HashMap<>();
     }

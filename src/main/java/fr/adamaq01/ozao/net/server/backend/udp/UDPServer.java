@@ -1,8 +1,8 @@
 package fr.adamaq01.ozao.net.server.backend.udp;
 
-import fr.adamaq01.ozao.net.protocol.Protocol;
 import fr.adamaq01.ozao.net.server.Connection;
 import fr.adamaq01.ozao.net.server.Server;
+import fr.adamaq01.ozao.net.server.protocol.ServerProtocol;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -10,13 +10,13 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 
 import java.net.InetSocketAddress;
-import java.util.*;
+import java.util.List;
 
 public class UDPServer extends Server {
 
     protected ChannelFuture channelFuture;
 
-    public UDPServer(Protocol protocol) {
+    public UDPServer(ServerProtocol protocol) {
         super(protocol);
     }
 

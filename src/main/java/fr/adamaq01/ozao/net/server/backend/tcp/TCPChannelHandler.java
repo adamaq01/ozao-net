@@ -33,13 +33,13 @@ class TCPChannelHandler extends SimpleChannelInboundHandler<ByteBuf> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
         Buffer buffer = Buffer.create(ReferenceCountUtil.retain(msg));
-        this.server.getProtocol().cut(buffer).stream().filter(data -> {
-            if (!this.server.getProtocol().verify(data)) {
+        this.server.getProtocol().cut(connection, buffer).stream().filter(data -> {
+            if (!this.server.getProtocol().verify(connection, data)) {
                 exceptionCaught(ctx, new OzaoException("Received a packet that does not suit the protocol requirements !"));
                 return false;
             }
             return true;
-        }).map(data -> this.server.getProtocol().decode(data)).forEachOrdered(packet -> {
+        }).map(data -> this.server.getProtocol().decode(connection, data)).forEachOrdered(packet -> {
             this.server.getHandlers().forEach(handler -> handler.onPacketReceive(server, connection, packet));
             this.server.getPacketHandlers().stream().filter(packetHandler -> packetHandler.verify(packet)).forEach(handler -> handler.onPacketReceive(server, connection, packet));
         });

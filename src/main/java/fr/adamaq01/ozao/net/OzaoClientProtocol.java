@@ -1,20 +1,20 @@
 package fr.adamaq01.ozao.net;
 
 import com.github.luben.zstd.Zstd;
+import fr.adamaq01.ozao.net.client.protocol.ClientProtocol;
 import fr.adamaq01.ozao.net.packet.Packet;
-import fr.adamaq01.ozao.net.protocol.Protocol;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Function;
 
-public class OzaoProtocol extends Protocol {
+public class OzaoClientProtocol extends ClientProtocol {
 
     private Function<Buffer, Buffer> compressFunction;
     private Function<Buffer, Buffer> decompressFunction;
 
-    public OzaoProtocol() {
+    public OzaoClientProtocol() {
         this(buffer -> {
             byte[] data = buffer.getBytes(buffer.readableBytes());
             byte[] compressedData = Zstd.compress(data);
@@ -29,7 +29,7 @@ public class OzaoProtocol extends Protocol {
         });
     }
 
-    public OzaoProtocol(Function<Buffer, Buffer> compressFunction, Function<Buffer, Buffer> decompressFunction) {
+    public OzaoClientProtocol(Function<Buffer, Buffer> compressFunction, Function<Buffer, Buffer> decompressFunction) {
         super("ozao", Map.of("compression", false));
         this.compressFunction = compressFunction;
         this.decompressFunction = decompressFunction;

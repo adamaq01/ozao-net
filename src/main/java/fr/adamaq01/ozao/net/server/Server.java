@@ -1,8 +1,7 @@
 package fr.adamaq01.ozao.net.server;
 
-import fr.adamaq01.ozao.net.OzaoException;
 import fr.adamaq01.ozao.net.packet.Packet;
-import fr.adamaq01.ozao.net.protocol.Protocol;
+import fr.adamaq01.ozao.net.server.protocol.ServerProtocol;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,13 +10,13 @@ import java.util.List;
 
 public abstract class Server {
 
-    protected Protocol protocol;
+    protected ServerProtocol protocol;
     protected int timeout;
     protected List<Connection> connections;
     protected List<ServerHandler> handlers;
     protected List<ServerPacketHandler> packetHandlers;
 
-    protected Server(Protocol protocol) {
+    protected Server(ServerProtocol protocol) {
         this.protocol = protocol;
         this.timeout = 30;
         this.connections = new ArrayList<>();
@@ -33,7 +32,7 @@ public abstract class Server {
 
     public abstract int getPort();
 
-    public Protocol getProtocol() {
+    public ServerProtocol getProtocol() {
         return protocol;
     }
 
@@ -72,19 +71,13 @@ public abstract class Server {
     }
 
     public Server broadcastPacket(Packet packet) {
-        if (!this.protocol.verify(packet))
-            this.handlers.forEach(handler -> handler.onException(this, null, new OzaoException("Tried to broadcast a packet that does not suit the protocol requirements !")));
-        else
-            getConnections().forEach(connection -> connection.sendPacket0(packet));
+        getConnections().forEach(connection -> connection.sendPacket(packet));
 
         return this;
     }
 
     public Server broadcastPacketExcept(Packet packet, Connection... connections) {
-        if (!this.protocol.verify(packet))
-            this.handlers.forEach(handler -> handler.onException(this, null, new OzaoException("Tried to broadcast a packet that does not suit the protocol requirements !")));
-        else
-            getConnections().stream().filter(connection -> !Arrays.stream(connections).anyMatch(connection1 -> connection1.equals(connection))).forEach(connection -> connection.sendPacket0(packet));
+        getConnections().stream().filter(connection -> !Arrays.asList(connections).contains(connection)).forEach(connection -> connection.sendPacket(packet));
 
         return this;
     }
